@@ -1,4 +1,3 @@
-// src/screens/CategoriesScreen.js
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -13,6 +12,7 @@ export default function CategoriesScreen({ navigation }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // categories once when screen loads
   useEffect(() => {
     fetch('https://fakestoreapi.com/products/categories')
       .then(res => res.json())
@@ -26,7 +26,7 @@ export default function CategoriesScreen({ navigation }) {
       });
   }, []);
 
-  // When a category is pressed, navigate to ProductsScreen with category param
+  // go to product list when category is clicked
   const handleCategoryPress = (category) => {
     navigation.navigate('Products', { category });
   };
@@ -34,8 +34,10 @@ export default function CategoriesScreen({ navigation }) {
   return (
     <View style={styles.container}>
       {loading ? (
+        // loading spinner
         <ActivityIndicator size="large" color="#007AFF" />
       ) : (
+        // list of categories
         <FlatList
           data={categories}
           keyExtractor={item => item}

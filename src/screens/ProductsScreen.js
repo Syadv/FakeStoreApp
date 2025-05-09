@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Image, StyleSheet } from 'react-native';
 
 export default function ProductsScreen({ route, navigation }) {
-  const { category } = route.params;
+  const { category } = route.params; // get category from previous screen
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // products for this category
   useEffect(() => {
     fetch(`https://fakestoreapi.com/products/category/${category}`)
       .then(res => res.json())
@@ -18,8 +19,9 @@ export default function ProductsScreen({ route, navigation }) {
       });
   }, [category]);
 
+  // go to product detail screen
   const handleProductPress = (item) => {
-    navigation.navigate('ProductDetail', { product: item });
+    navigation.navigate('ProductDetails', { product: item });
   };
 
   if (loading) {

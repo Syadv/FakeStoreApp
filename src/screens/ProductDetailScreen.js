@@ -1,49 +1,66 @@
-// src/screens/ProductDetailScreen.js
-
 import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  Button,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../features/cart/cartSlice';
 
 export default function ProductDetailScreen({ route }) {
-  const { product } = route.params;
+  const { product } = route.params; // get product from route
+  const dispatch = useDispatch();
+
+  // add product to cart
+  const handleAddToCart = () => {
+    dispatch(addToCart(product));
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image source={{ uri: product.image }} style={styles.image} />
       <Text style={styles.title}>{product.title}</Text>
-      <Text style={styles.price}>${product.price}</Text>
+      <Text style={styles.price}>${product.price.toFixed(2)}</Text>
       <Text style={styles.description}>{product.description}</Text>
+      <View style={styles.buttonContainer}>
+        <Button title="Add to Cart" onPress={handleAddToCart} />
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
     padding: 16,
-    backgroundColor: '#fafafa',
-    flexGrow: 1,
+    alignItems: 'center',
   },
   image: {
-    width: 180,
-    height: 180,
+    width: 200,
+    height: 200,
+    marginBottom: 16,
     resizeMode: 'contain',
-    marginBottom: 18,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    textAlign: 'center',
     marginBottom: 12,
+    textAlign: 'center',
   },
   price: {
-    fontSize: 18,
-    color: '#1976d2',
-    marginBottom: 16,
-    fontWeight: 'bold',
+    fontSize: 16,
+    color: 'green',
+    marginBottom: 12,
   },
   description: {
-    fontSize: 15,
-    textAlign: 'center',
-    color: '#333',
+    fontSize: 14,
+    marginBottom: 20,
+    textAlign: 'justify',
+  },
+  buttonContainer: {
+    marginTop: 10,
+    width: '80%',
   },
 });
