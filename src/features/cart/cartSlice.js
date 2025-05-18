@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// initial cart state
 const initialState = {
   items: [],
   totalQuantity: 0,
@@ -11,7 +10,6 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    // add product to cart
     addToCart(state, action) {
       const newItem = action.payload;
       const existingItem = state.items.find(item => item.id === newItem.id);
@@ -22,10 +20,9 @@ const cartSlice = createSlice({
         state.items.push({ ...newItem, quantity: 1, totalPrice: newItem.price });
       } else {
         existingItem.quantity++;
-        existingItem.totalPrice += newItem.price;
+        existingItem.totalPrice += existingItem.price;
       }
     },
-    // increase quantity
     increaseQuantity(state, action) {
       const id = action.payload;
       const existingItem = state.items.find(item => item.id === id);
@@ -36,7 +33,6 @@ const cartSlice = createSlice({
         state.totalAmount += existingItem.price;
       }
     },
-    // decrease quantity or remove if 0
     decreaseQuantity(state, action) {
       const id = action.payload;
       const existingItem = state.items.find(item => item.id === id);
@@ -51,7 +47,6 @@ const cartSlice = createSlice({
         }
       }
     },
-    // remove item from cart
     removeFromCart(state, action) {
       const id = action.payload;
       const item = state.items.find(item => item.id === id);
@@ -61,6 +56,14 @@ const cartSlice = createSlice({
         state.items = state.items.filter(item => item.id !== id);
       }
     },
+    restoreCart(state, action) {
+      state.items = action.payload.map(item => ({
+        ...item,
+        totalPrice: item.price * item.quantity,
+      }));
+      state.totalQuantity = state.items.reduce((sum, i) => sum + i.quantity, 0);
+      state.totalAmount = state.items.reduce((sum, i) => sum + i.totalPrice, 0);
+    },
   },
 });
 
@@ -69,6 +72,7 @@ export const {
   increaseQuantity,
   decreaseQuantity,
   removeFromCart,
+  restoreCart,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

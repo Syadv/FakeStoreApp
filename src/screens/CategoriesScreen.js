@@ -8,11 +8,13 @@ import {
   StyleSheet,
 } from 'react-native';
 
+const PRIMARY = '#FF7043';
+const BACKGROUND = '#FFF3E0';
+
 export default function CategoriesScreen({ navigation }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // categories once when screen loads
   useEffect(() => {
     fetch('https://fakestoreapi.com/products/categories')
       .then(res => res.json())
@@ -26,7 +28,6 @@ export default function CategoriesScreen({ navigation }) {
       });
   }, []);
 
-  // go to product list when category is clicked
   const handleCategoryPress = (category) => {
     navigation.navigate('Products', { category });
   };
@@ -34,13 +35,12 @@ export default function CategoriesScreen({ navigation }) {
   return (
     <View style={styles.container}>
       {loading ? (
-        // loading spinner
-        <ActivityIndicator size="large" color="#007AFF" />
+        <ActivityIndicator size="large" color={PRIMARY} />
       ) : (
-        // list of categories
         <FlatList
           data={categories}
           keyExtractor={item => item}
+          contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.categoryItem}
@@ -58,17 +58,25 @@ export default function CategoriesScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#f6f6f6',
+    backgroundColor: BACKGROUND,
+    padding: 16,
+  },
+  list: {
+    paddingTop: 8,
   },
   categoryItem: {
-    backgroundColor: '#f0f0f0',
-    padding: 15,
-    marginBottom: 10,
+    backgroundColor: '#fff',
+    borderLeftWidth: 6,
+    borderLeftColor: PRIMARY,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    marginBottom: 12,
     borderRadius: 8,
+    elevation: 2,
   },
   categoryText: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 18,
+    fontWeight: '600',
+    color: PRIMARY,
   },
 });

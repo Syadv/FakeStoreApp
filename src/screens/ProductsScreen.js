@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  ActivityIndicator,
+  TouchableOpacity,
+  Image,
+  StyleSheet
+} from 'react-native';
+
+const PRIMARY = '#FF7043';
+const ACCENT = '#BF360C';
+const BACKGROUND = '#FFF3E0';
 
 export default function ProductsScreen({ route, navigation }) {
-  const { category } = route.params; // get category from previous screen
+  const { category } = route.params;
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading]   = useState(true);
 
-  // products for this category
   useEffect(() => {
     fetch(`https://fakestoreapi.com/products/category/${category}`)
       .then(res => res.json())
@@ -15,30 +26,42 @@ export default function ProductsScreen({ route, navigation }) {
         setLoading(false);
       })
       .catch(err => {
+        console.error(err);
         setLoading(false);
       });
   }, [category]);
 
-  // go to product detail screen
   const handleProductPress = (item) => {
     navigation.navigate('ProductDetails', { product: item });
   };
 
   if (loading) {
-    return <ActivityIndicator style={{ flex: 1 }} size="large" color="#1976d2" />;
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size="large" color={PRIMARY} />
+      </View>
+    );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fafafa' }}>
+    <View style={styles.container}>
       <FlatList
         data={products}
         keyExtractor={item => item.id.toString()}
+        contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.productContainer} onPress={() => handleProductPress(item)}>
-            <Image source={{ uri: item.image }} style={styles.productImage} />
-            <View style={styles.productInfo}>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.price}>${item.price}</Text>
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => handleProductPress(item)}
+          >
+            <Image source={{ uri: item.image }} style={styles.image} />
+            <View style={styles.info}>
+              <Text style={styles.title} numberOfLines={2}>
+                {item.title}
+              </Text>
+              <Text style={styles.price}>
+                ${item.price.toFixed(2)}
+              </Text>
             </View>
           </TouchableOpacity>
         )}
@@ -48,31 +71,47 @@ export default function ProductsScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  productContainer: {
+  container: {
+    flex: 1,
+    backgroundColor: BACKGROUND,
+  },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  list: {
+    padding: 12,
+  },
+  card: {
     flexDirection: 'row',
     backgroundColor: '#fff',
-    borderRadius: 12,
-    margin: 8,
-    padding: 10,
+    borderLeftWidth: 6,
+    borderLeftColor: PRIMARY,
+    borderRadius: 10,
+    marginBottom: 12,
+    padding: 12,
     alignItems: 'center',
     elevation: 2,
   },
-  productImage: {
-    width: 60,
-    height: 60,
-    marginRight: 12,
+  image: {
+    width: 70,
+    height: 70,
     resizeMode: 'contain',
+    marginRight: 12,
   },
-  productInfo: {
+  info: {
     flex: 1,
   },
   title: {
-    fontWeight: 'bold',
     fontSize: 15,
+    fontWeight: '600',
+    color: PRIMARY,
   },
   price: {
-    color: '#1976d2',
     marginTop: 6,
-    fontWeight: 'bold',
+    fontSize: 14,
+    fontWeight: '700',
+    color: ACCENT,
   },
 });
